@@ -9,6 +9,10 @@ class ResponseChat:
     def set_bot_state(self, state=""):
         self.data['bot_state'] = state
 
+    def send_list(self, ls=[]):
+        self.logger.debug(locals()) if self.logger else None
+        self.data['data'].append({"type": "list", "body": {"data": ls}})
+
     def send_text(self, msg=""):
         self.logger.debug(locals()) if self.logger else None
         self.data['data'].append({"type": "text", "body": {"data": msg}})
