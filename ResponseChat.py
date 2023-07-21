@@ -11,7 +11,9 @@ class ResponseChat:
 
     def send_list(self, ls=[]):
         self.logger.debug(locals()) if self.logger else None
-        self.data['data'].append({"type": "list", "body": {"data": ls}})
+        for elem in ls:
+            self.data['data'].append({"type": "text", "body": {"data": elem}})
+        # self.data['data'].append({"type": "list", "body": {"data": ls}})
 
     def send_text(self, msg=""):
         self.logger.debug(locals()) if self.logger else None
