@@ -9,8 +9,10 @@ food_inventory_bp = Blueprint("food_inventory", __name__)
 
 # Food inventory menu
 @food_inventory_bp.route('/food_inventory', methods=['POST'])
-def handle_request(r=None, json_data=None):
+def handle_request(r=None, json_data=None, logging=None):
     do_return = False
+    if logging:
+        logging.info('Data: {}'.format(json.dumps(json_data)))
     if not r:
         r = ResponseChat()
     if not json_data:
