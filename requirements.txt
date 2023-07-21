@@ -4,5 +4,6 @@ flask_migrate
 mysql-connector-python
 gunicorn
 openai
+python-decouple
 # mysql-connector-python
 # mysqlclient==1.4.6
