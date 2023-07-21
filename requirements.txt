@@ -1,2 +1,8 @@
-Flask==2.0.2
-gunicorn==20.1.0
+Flask
+flask_sqlalchemy
+flask_migrate
+mysql-connector-python
+gunicorn
+openai
+# mysql-connector-python
+# mysqlclient==1.4.6
