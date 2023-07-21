@@ -16,7 +16,7 @@ def display_food_inventory(r):
     list_obj = r.init_interactive("Food Stock")
     menu_section = list_obj.section("Categories")
     categories = fetch_food_inventory_categories()
-    for i, category[0] in enumerate(categories):
+    for i, category in enumerate(categories):
         menu_section.add_choice(f"{i}", category[0])
     buttons = get_buttons_from_data(
         title="Food inventory",
