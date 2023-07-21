@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from ResponseChat import ResponseChat
-from src.utils import display_main_menu, get_buttons_from_data
+from src.utils import display_main_menu, get_buttons_from_data, display_food_inventory
 import logging
 import json
 from src.db_utils import init_food_inventory, fetch_food_inventory_categories, fetch_food_inventory_by_category
