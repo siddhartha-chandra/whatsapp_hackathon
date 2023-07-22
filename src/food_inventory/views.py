@@ -11,14 +11,16 @@ food_inventory_bp = Blueprint("food_inventory", __name__)
 @food_inventory_bp.route('/food_inventory', methods=['POST'])
 def handle_request(r=None, json_data=None, logging=None):
     do_return = False
-    if logging:
-        logging.info('Data: {}'.format(json.dumps(json_data)))
+        
     if not r:
         r = ResponseChat()
     if not json_data:
         json_data = request.get_json()
+        import logging
         logging.basicConfig(filename='chat_builder.log', level=logging.INFO)
         do_return = True
+
+    logging.info('Data: {}'.format(json.dumps(json_data)))
 
     # init food inventory if needed
     if (json_data["data"]["type"] == "initialize"):
@@ -34,6 +36,7 @@ def handle_request(r=None, json_data=None, logging=None):
             query_result = fetch_food_inventory_by_category(phone_id, title)
             ls = [repr(row) for row in query_result]
             r.send_list(ls)
+            r.set_bot_state("Food_Inventory_Menu")
         else:
             display_main_menu(r)
     else:
