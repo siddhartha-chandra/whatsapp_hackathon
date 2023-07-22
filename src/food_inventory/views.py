@@ -22,11 +22,8 @@ def handle_request(r=None, json_data=None, logging=None):
 
     logging.info('Data: {}'.format(json.dumps(json_data)))
 
-    phone_id = json_data["caller"]["id"]
-    no_data_present = is_food_inventory_empty(phone_id)
-
     # add to food inventory if needed
-    if (no_data_present or json_data["data"]["type"] == "add_data"):
+    if (json_data["data"]["type"] == "add_data"):
         init = json_data["data"].get("init", False)
         if init:
             r.send_text("Clearing existing data in Food inventory")
