@@ -32,7 +32,7 @@ def add_to_food_inventory(phone_id, init=False):
         dict(name="Quinoa", quantity=500, units="grams", category="Grains"),
         dict(name="Peanut Butter", quantity=500, units="grams", category="Nuts", sub_category="Butter"),
         dict(name="Tomato", quantity=500, units="grams", category="Vegetables"),
-        dict(name="ALmond Butter", quantity=250, units="grams", category="Nuts", sub_category="Butter"),
+        dict(name="Almond Butter", quantity=250, units="grams", category="Nuts", sub_category="Butter"),
         dict(name="Mint Leaves", quantity=200, units="grams", category="Herbs"),
         dict(name="small Lemon", quantity=5, units="pieces", category="Fruits"),
         dict(name="salt", quantity=250, units="grams", category="Seasonings"),
