@@ -7,17 +7,6 @@ app = Flask(__name__)
 env_config = f"config.{os.getenv('ENV')}Config"
 app.config.from_object(env_config)
 
-# username = "siddhartha"
-# password = "helloSq1"
-# hostname = "localhost"
-# dbname = "hackathon"
-
-# SQLALCHEMY_DATABASE_URI = f"mysql+mysqlconnector://{username}:{password}@{hostname}/{dbname}"
-
-# app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
-# app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
-# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
