@@ -27,15 +27,6 @@ class FoodInventory(db.Model):
         self.created_on = created_on
         self.updated_on = updated_on
 
-    # def __repr__(self):
-    #     res = f"Item: {self.name} | Quantity: {self.quantity} {self.units} | Category: {self.category}"
-    #     if self.sub_category:
-    #         res += f" ({self.sub_category})"
-    #     if self.price:
-    #         res += f" | {self.price}"
-    #     res += f" | Updated on: {self.updated_on}"
-        # return res
-
     def __repr__(self):
         res = f"Item: {self.name}\nQuantity: {self.quantity} {self.units}\nCategory: {self.category}"
         if self.sub_category:
