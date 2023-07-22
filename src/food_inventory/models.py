@@ -34,7 +34,7 @@ class FoodInventory(db.Model):
     #     if self.price:
     #         res += f" | {self.price}"
     #     res += f" | Updated on: {self.updated_on}"
-        return res
+        # return res
 
     def __repr__(self):
         res = f"Item: {self.name}\nQuantity: {self.quantity} {self.units}\nCategory: {self.category}"
