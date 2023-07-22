@@ -1,6 +1,8 @@
 import json
 from src.utils import get_buttons_from_data, display_main_menu, display_food_inventory
 from src.db_utils import is_food_inventory_empty, add_to_food_inventory
+from src.recommend.views import handle_request as handle_recommend_request
+
 
 
 # MAIN MENU
@@ -26,10 +28,9 @@ def handle_request(r, json_data, logging):
             )
             r.set_bot_state("Food_Update_Menu")
 
-        
         # MEAL RECOMMEND
         elif reply_id == "recommend":
-            pass
+            handle_recommend_request(r, json_data, logging)
 
         # USER PREFERENCES
         elif reply_id == "preferences":
