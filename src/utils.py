@@ -23,7 +23,7 @@ def display_food_inventory(r):
         button_names=["View by category", "Main Menu"]
     )
     main_menu_section = list_obj.section("Main Menu")
-    main_menu_section.add_choice("Main_Menu", "Main Menu", description="Main menu")
+    main_menu_section.add_choice("Main_Menu", "Main Menu", description="")
     r.add_interactive_object(list_obj)
     r.set_bot_state("Food_Inventory_Menu")
 
