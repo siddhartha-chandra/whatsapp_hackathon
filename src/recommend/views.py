@@ -6,9 +6,10 @@ import json
 from src.llm_utils import ConversationAgent
 
 from src.db_utils import (
-    fetch_user_defaults, fetch_user_inventoryis_food_inventory_empty, 
+    fetch_user_defaults, is_food_inventory_empty, add_to_user_defaults,
     add_to_food_inventory, fetch_food_inventory_categories, fetch_food_inventory_by_category, 
-    fetch_food_inventory_for_user, fetch_conversation
+    fetch_food_inventory_for_user, fetch_conversation, add_msg_to_conversation,
+    update_user_conversation, clear_conversation, get_conversation_columns, get_user_defaults_columns, get_food_inventory_columns
     )
 
 recommend_bp = Blueprint("meal_recommend", __name__)
@@ -29,11 +30,17 @@ def handle_request(r=None, json_data=None, logging=None):
         do_return = True
     logging.info('Data: {}'.format(json.dumps(json_data)))
     phone_id = json_data["caller"]["id"]
+
+    # set bot_state
     r.set_bot_state("Food_Recommender")
 
     # workflow:
     # 1. get user_defaults
     defaults = fetch_user_defaults(phone_id)
+    if not defaults and json_data["data"]["type"] == "add_data":
+        # add sample user_defaults to user_defaults table
+        add_to_user_defaults(phone_id)
+        defaults = fetch_user_defaults(phone_id)
 
     # 2. get user_inventory
     food_inventory = fetch_food_inventory_for_user(phone_id)
@@ -43,49 +50,63 @@ def handle_request(r=None, json_data=None, logging=None):
 
     # 4. instantiate conversation agent and initialize for meal recommendation
     agent = ConversationAgent()
+    d = dict()
+    d['food_inventory'] = []
+    for item in food_inventory:
+        d['food_inventory'].append(
+            f"{item.name}, {item.quantity} {item.units}"
+        )
+        
+    if defaults:  
+        if defaults.diet_preferences:
+            d['diet_preferences'] = defaults.diet_preferences
+        if defaults.diet_restrictions:
+            d['diet_restrictions'] = defaults.diet_restrictions
+        if defaults.cooking_appliances:
+            d['cooking_appliances'] = defaults.cooking_appliances
+        if defaults.utensils:
+            d['utensils'] = defaults.utensils
+        if defaults.location:
+            d['location'] = defaults.location
+
+    agent.init_for_meal_recommendation(**d)
 
     # 4. if message_history exists, append to conversation agent else ask the first question to use and add to messages
     # message history should start from the first question that user receives from agent on whatsapp chat
     if not message_history:
         # ask first question
-        first_question = agent.get_first_question(defaults)
+        first_question = agent.get_first_meal_recommendation_questions()
         first_prompt = agent.get_first_meal_recommendation_prompt()
-        # store question to conversations table
-        # send_text(first_question)
-        agent.append_history(agent.get_first_question(defaults))
-    
-    agent.messages += message_history
         
+        # store question to conversations table
+        messages = [agent.format_message(message=first_prompt, role="assistant")]
+        add_msg_to_conversation(phone_id, messages)
+        
+        r.send_text(first_prompt)
+    else:
+        # if message history exists, then the current request has a response from user
+        agent.messages += message_history.messages
 
-
-    # if message history exists, then the current request has a response from user
-    # generate agent response for the user response and add to conversations table
-    
-    # set bot_state
-    # check for terminal conditions for 'agent_response' and 'user_response', and if encountered, 
-    # clear conversations table for given number
-    # display main menu
-    
-    if (json_data["data"]["type"] == "reply"):
-        reply_id = json_data["data"]["body"]["id"]
-        title = json_data["data"]["body"]["title"]
-        if reply_id == "recommend":
-            # steps: 
-            # 1. start conversation agent and gather context
-            # 2. generate response from conversation agent
-            # 3. format response
-            # 4. More recommendations or back to main menu
-            query_result = fetch_food_inventory_by_category(phone_id, title)
-            ls = [repr(row) for row in query_result]
-            r.send_list(ls)
-            display_food_inventory(r)
-        elif reply_id == "Main_Menu":
+        # generate agent response for the user response and add to conversations table    
+        user_response  = json_data["data"]["body"]["data"]
+        if user_response.lower() in {"done", "exit", "bye", "quit"}:
+            # clear conversations table for given number
+            clear_conversation(phone_id)
+            # display main menu
+            r.set_bot_state("Main_Menu")
             display_main_menu(r)
         else:
-            r.send_text("Sorry, I don't understand")
-    else:
-        # todo: add interaction with chatgpt here
-        display_food_inventory(r)
+            agent_response = agent.generate_response(user_response)
+            update_user_conversation(phone_id, agent.messages)
+            r.send_text(agent_response)
+
+        if agent_response.endswith(agent.trigger_stop_message()):
+            # clear conversations table for given number
+            clear_conversation(phone_id)
+            # display main menu
+            r.set_bot_state("Main_Menu")
+            display_main_menu(r)
+
 
     if do_return:
         logging.info('Return: {}'.format(r.get_data()))
