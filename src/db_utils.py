@@ -9,10 +9,17 @@ def fetch_food_inventory_categories():
 def fetch_food_inventory_by_category(phone_id, category):
     return db.session.query(FoodInventory).filter_by(phone_id=phone_id, category=category).all()
 
+def fetch_food_inventory_for_user(phone_id):
+    return db.session.query(FoodInventory).filter_by(phone_id=phone_id).all()
 
-def init_food_inventory(phone_id):
+def is_food_inventory_empty(phone_id):
+    return len(fetch_food_inventory_for_user(phone_id)) == 0
+
+def add_to_food_inventory(phone_id, init=False):
     # drop all items in the table 'food_inventory'
-    db.session.query(FoodInventory).delete()
+    if init:
+        db.session.query(FoodInventory).delete()
+
     phone_id = phone_id
     created_on = datetime.now()
     updated_on = datetime.now()
