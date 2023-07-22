@@ -12,10 +12,12 @@ migrate = Migrate(app, db)
 
 from src.core.views import core_bp
 from src.food_inventory.views import food_inventory_bp
+from src.recommend.views import recommend_bp
 
 
 app.register_blueprint(core_bp)
 app.register_blueprint(food_inventory_bp)
+app.register_blueprint(recommend_bp)
 
 from src.food_inventory.models import FoodInventory
 
