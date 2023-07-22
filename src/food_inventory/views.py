@@ -36,10 +36,11 @@ def handle_request(r=None, json_data=None, logging=None):
             query_result = fetch_food_inventory_by_category(phone_id, title)
             ls = [repr(row) for row in query_result]
             r.send_list(ls)
-            r.set_bot_state("Food_Inventory_Menu")
+            display_food_inventory(r)
         else:
             display_main_menu(r)
     else:
+        # todo: add interaction with chatgpt here
         display_food_inventory(r)
 
     if do_return:
