@@ -22,6 +22,8 @@ def handle_request(r=None, json_data=None, logging=None):
 
     logging.info('Data: {}'.format(json.dumps(json_data)))
 
+    phone_id = json_data["caller"]["id"]
+
     # add to food inventory if needed
     if (json_data["data"]["type"] == "add_data"):
         init = json_data["data"].get("init", False)
