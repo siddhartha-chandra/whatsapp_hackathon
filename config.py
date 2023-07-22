@@ -1,3 +1,4 @@
+import os
 from decouple import config
 
 
@@ -17,19 +18,11 @@ class Config(object):
 class ProductionConfig(Config):
     DEBUG = False
     DEBUG_TB_ENABLED = False
-    username = "siddharthachandr"
-    password = "helloSq1"
-    hostname = "siddharthachandra.mysql.pythonanywhere-services.com"
-    dbname = "siddharthachandr$hackathon"
-    SQLALCHEMY_DATABASE_URI = f"mysql+mysqlconnector://{username}:{password}@{hostname}/{dbname}"
+    SQLALCHEMY_DATABASE_URI = f"postgresql://{os.getenv('POSTGRES_USERNAME')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DBNAME_DEV')}"
 
 
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
-    username = "siddhartha"
-    password = "helloSq1"
-    hostname = "localhost"
-    dbname = "hackathon"
-    SQLALCHEMY_DATABASE_URI = f"mysql+mysqlconnector://{username}:{password}@{hostname}/{dbname}"
+    SQLALCHEMY_DATABASE_URI = f"postgresql://{os.getenv('POSTGRES_USERNAME')}:{os.getenv('POSTGRES_PASSWORD')}@{config('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DBNAME_DEV')}"
     
