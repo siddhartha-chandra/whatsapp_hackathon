@@ -26,22 +26,9 @@ def handle_request(r, json_data, logging):
             )
             r.set_bot_state("Food_Update_Menu")
 
-        # PAST MEALS
-        elif reply_id == "history":
-            # todo: 
-            # connect to 'meal_consumed' table and view items
-            pass
-
-        # FAVORITE MEALS
-        elif reply_id == "favorites":
-            pass
-
+        
         # MEAL RECOMMEND
         elif reply_id == "recommend":
-            pass
-
-        # RECORD A MEAL
-        elif reply_id == "record":
             pass
 
         # USER PREFERENCES
