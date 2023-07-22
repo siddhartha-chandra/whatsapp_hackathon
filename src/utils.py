@@ -33,11 +33,11 @@ def display_main_menu(r):
     menu_section = list_obj.section("Main Menu")
     menu_section.add_choice("view", "food stock", description="View food inventory")
     menu_section.add_choice("update", "update food stock", description="Update food inventory ")
-    menu_section.add_choice("history", "meal history", description="view past meals consumed")
-    menu_section.add_choice("favorites", "meal favorites", description="view your most frequently meals consumed")
     menu_section.add_choice("recommend", "recommend a meal", description="Recommend a meal based on your preferences")
-    menu_section.add_choice("record", "record a meal", description="Record a meal that you consumed")
     menu_section.add_choice("preferences", "user preferences", description="View/Update your user preferences")
+    # menu_section.add_choice("history", "meal history", description="view past meals consumed")
+    # menu_section.add_choice("favorites", "meal favorites", description="view your most frequently meals consumed")
+    # menu_section.add_choice("record", "record a meal", description="Record a meal that you consumed")
     # "Recommend nearby shops"
     # "Refrigerator cleanup"
     r.add_interactive_object(list_obj)
