@@ -3,7 +3,7 @@ from ResponseChat import ResponseChat
 from src.utils import display_main_menu, get_buttons_from_data, display_food_inventory
 import logging
 import json
-from src.db_utils import init_food_inventory, fetch_food_inventory_categories, fetch_food_inventory_by_category
+from src.db_utils import is_food_inventory_empty, add_to_food_inventory, fetch_food_inventory_categories, fetch_food_inventory_by_category
 
 food_inventory_bp = Blueprint("food_inventory", __name__)
 
@@ -22,15 +22,20 @@ def handle_request(r=None, json_data=None, logging=None):
 
     logging.info('Data: {}'.format(json.dumps(json_data)))
 
-    # init food inventory if needed
-    if (json_data["data"]["type"] == "initialize"):
-        init_food_inventory(json_data["caller"]["id"])
-        r.send_text("Food inventory initialized")
+    phone_id = json_data["caller"]["id"]
+    no_data_present = is_food_inventory_empty(phone_id)
+
+    # add to food inventory if needed
+    if (no_data_present or json_data["data"]["type"] == "add_data"):
+        init = json_data["data"].get("init", False)
+        if init:
+            r.send_text("Clearing existing data in Food inventory")
+        add_to_food_inventory(phone_id, init)
+        r.send_text("Sample stock added in Food inventory")
 
     elif (json_data["data"]["type"] == "reply"):
         reply_id = json_data["data"]["body"]["id"]
         title = json_data["data"]["body"]["title"]
-        phone_id = json_data["caller"]["id"]
         if reply_id != "Main_Menu":
             # show data
             query_result = fetch_food_inventory_by_category(phone_id, title)
