@@ -30,9 +30,10 @@ def display_user_preferences(r, phone_id):
     
     main_menu_section = list_obj.section("Main Menu")
     main_menu_section.add_choice("Main_Menu", "Main Menu", description="")
+    text = "From the interactive list below, you can view user preferences by category or return to the main menu."
+    text += "\nAlternately, if you want to add/modify/delete an item in your user preferences, please write the exact name of the item in the following format: Add/Modify/Delete [Item name]"
+    r.send_text(text)
     r.add_interactive_object(list_obj)
-    text = "From the interactive list above, you can view user preferences by category or return to the main menu."
-    text_2 = "Alternately, if you want to add/modify/delete an item in your user preferences, please write the exact name of the item in the following format: Add/Modify/Delete [Item name]"
     r.set_bot_state("User_Preferences_Menu")
 
 def display_food_inventory(r):
@@ -45,11 +46,11 @@ def display_food_inventory(r):
     
     main_menu_section = list_obj.section("Main Menu")
     main_menu_section.add_choice("Main_Menu", "Main Menu", description="")
-    r.add_interactive_object(list_obj)
-    text = "From the interactive list above, you can view food inventory items by category or return to the main menu."
-    text_2 = "Alternately, if you want to add/modify/delete an item in your food inventory, please write the exact name of the item in the following format: Add/Modify/Delete [Item name]"
+    
+    text = "From the interactive list below, you can view food inventory items by category or return to the main menu."
+    text += "\nAlternately, if you want to add/modify/delete an item in your food inventory, please write the exact name of the item in the following format: Add/Modify/Delete [Item name]"
     r.send_text(text)
-    r.send_text(text_2)
+    r.add_interactive_object(list_obj)
     r.set_bot_state("Food_Inventory_Menu")
 
 
