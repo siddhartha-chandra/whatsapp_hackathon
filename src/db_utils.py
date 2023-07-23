@@ -9,11 +9,36 @@ def columns(table_obj):
     return table_obj.columns
 
 ### Food Inventory ###
+def update_food_inventory_item(phone_id, name, item_dict):
+
+    to_update = fetch_food_inventory_by_name(phone_id, name)
+    item_dict['created_on'] = datetime.now()
+    item_dict['updated_on'] = datetime.now()
+    
+    if to_update:
+        item_dict['created_on'] = to_update.created_on
+        delete_from_food_inventory(phone_id, name)
+        make_transient(to_update)
+       
+    record = FoodInventory(**item_dict)
+    db.session.add(record)
+    db.session.commit()
+
+def delete_from_food_inventory(phone_id, name):
+    db.session.query(FoodInventory).filter_by(phone_id=phone_id, name=name).delete()
+    db.session.commit()
+
 def get_food_inventory_columns():
     return columns(FoodInventory)
 
 def fetch_food_inventory_categories():
     return db.session.query(FoodInventory.category).distinct().all()
+
+def fetch_food_inventory_subcategories():
+    return db.session.query(FoodInventory.sub_category).distinct().all()
+
+def fetch_food_inventory_by_name(phone_id, name):
+    return db.session.query(FoodInventory).filter_by(phone_id=phone_id, name=name).first()
 
 def fetch_food_inventory_by_category(phone_id, category):
     return db.session.query(FoodInventory).filter_by(phone_id=phone_id, category=category).all()
@@ -59,6 +84,17 @@ def add_to_food_inventory(phone_id, init=False):
 
 
 ### User Defaults ###
+def clear_user_preferences(phone_id):
+    db.session.query(UserDefaults).filter_by(phone_id=phone_id).delete()
+    db.session.commit()
+
+def update_user_preferences(phone_id, record):
+    clear_user_preferences(phone_id)
+    make_transient(record)
+    db.session.add(record)
+    db.session.commit()
+    
+
 def get_user_defaults_columns():
     return columns(UserDefaults)
 
