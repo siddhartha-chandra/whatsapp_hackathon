@@ -83,8 +83,8 @@ def handle_request(r=None, json_data=None, logging=None):
         add_msg_to_conversation(phone_id, messages)
         
         r.send_text(first_prompt)
-    else:
-        # if message history exists, then the current request has a response from user
+    elif message_history and json_data['data']['type'] != 'reply':
+        # if message history exists, and its not a reply then the current request has a response from user
         agent.messages += message_history.messages
 
         # generate agent response for the user response and add to conversations table    
@@ -114,6 +114,11 @@ def handle_request(r=None, json_data=None, logging=None):
                     # display main menu
                     r.set_bot_state("Main_Menu")
                     display_main_menu(r)
+    else:
+        agent_response = "Something went wrong!..Let me sober up and get back...In case I don't remember your earlier stuff, blame it on the artificial concussion I just had"
+        clear_conversation(phone_id)
+        r.send_text(agent_response)
+        handle_request(r, json_data, logging)
 
 
     if do_return:
