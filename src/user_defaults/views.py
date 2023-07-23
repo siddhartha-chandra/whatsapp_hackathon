@@ -127,7 +127,7 @@ def handle_request(r=None, json_data=None, logging=None):
             if user_response.startswith("modify"):
                 preference = user_response[6:].strip()
                 query_result = fetch_user_defaults(phone_id)
-                result = parse_query_result(preference, query_result)
+                result = parse_query_result(preference, query_result) if query_result else ""
         
                 if result:
                     text = f"""The preference: {preference} is set and has the following properties: \n{result}"""
@@ -139,11 +139,12 @@ def handle_request(r=None, json_data=None, logging=None):
                 else:
                     text = f"The preference: {preference} is not set! Let's start over again"
                     clear_conversation(phone_id)
+                    r.send_text(text)
                     display_user_preferences(r, phone_id)
             elif user_response.startswith("delete"):
                 preference = user_response[7:].strip()
                 query_result = fetch_user_defaults(phone_id)
-                result = parse_query_result(preference, query_result)
+                result = parse_query_result(preference, query_result) if query_result else ""
                 if result:
                     text = f"""The preference: {preference} is set and has the following value: \n{result}"""
                     r.send_text(text)
@@ -154,27 +155,29 @@ def handle_request(r=None, json_data=None, logging=None):
                 else:
                     text = f"The preference: {preference} is not set! Let's start over again"
                     clear_conversation(phone_id)
+                    r.send_text(text)
                     display_user_preferences(r, phone_id)
             else:
                 preference = user_response[3:].strip()
                 query_result = fetch_user_defaults(phone_id)
-                result = parse_query_result(preferene, query_result)
+                result = parse_query_result(preference, query_result) if query_result else ""
                 if not result:
-                    text = f"""Alright! Setting value for the preference: {preference}!\n\nPlease go ahead and add value""" 
+                    text = f"""Alright! Setting value for the preference: {preference}!\n\nPlease go ahead and add value/s""" 
                     r.send_text(text)
                     message = f"add {preference}"
                     add_msg_to_conversation(phone_id, [{"role": "user", "content": message}])
                 else:
                     text = f"""The preference: {preference} is already set! Though you can modify it using 'modify [preference name]'""" 
+                    r.send_text(text)
                     clear_conversation(phone_id)
                     display_user_preferences(r, phone_id)
         # 2. if conversation exists:
         elif message_history:
             query_result = fetch_user_defaults(phone_id)
             # delete case:
-            if message_history[0].startswith("delete"):
+            if message_history.messages[0]['content'].startswith("delete"):
                 if user_response == "yes":
-                    preference = message_history[0][3:].strip()
+                    preference = message_history.messages[0]['content'][3:].strip()
                     query_result = reset_preference_in_query_result(preference, query_result)
                     update_user_preferences(phone_id, query_result)
                     text = f"preference: {preference} has been cleared!"
@@ -183,9 +186,9 @@ def handle_request(r=None, json_data=None, logging=None):
                     r.send_text("Phew! That was close...")
 
             # modify case:
-            elif message_history[0].startswith("modify"):
-                preference = message_history[0][6:].strip()
-                if preference != location:
+            elif message_history.messages[0]['content'].startswith("modify"):
+                preference = message_history.messages[0]['content'][6:].strip()
+                if preference != 'location':
                     user_response = [k.strip() for k in user_response.split(",")]
                 try: 
                     query_result = reset_preference_in_query_result(preference, query_result, user_response)                    
@@ -194,12 +197,12 @@ def handle_request(r=None, json_data=None, logging=None):
                     logging.error(e)
                     r.send_text("Sorry, that didn't work out as well as it appeared to me. Let's try again")
                 else:
-                    r.send_text(f"preference: {preference} has been seet!")
+                    r.send_text(f"preference: {preference} has been set!")
                     r.send_text(f"new value:\n{user_response}")
             # add case
-            elif message_history[0].startswith("add"):
-                preference = message_history[0][3:].strip()
-                if preference != location:
+            elif message_history.messages[0]['content'].startswith("add"):
+                preference = message_history.messages[0]['content'][3:].strip()
+                if preference != "location":
                     user_response = [k.strip() for k in user_response.split(",")]
                 
                 try: 

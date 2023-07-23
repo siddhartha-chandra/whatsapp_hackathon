@@ -41,14 +41,15 @@ def handle_request(r=None, json_data=None, logging=None):
     elif (json_data["data"]["type"] == "reply"):
         reply_id = json_data["data"]["body"]["id"]
         title = json_data["data"]["body"]["title"]
-        if reply_id != "Main_Menu":
+        if reply_id == "Main_Menu":
+            display_main_menu(r)
+        else:
             # show data
             query_result = fetch_food_inventory_by_category(phone_id, title)
             ls = [repr(row) for row in query_result]
             r.send_list(ls)
             display_food_inventory(r)
-        else:
-            display_main_menu(r)
+        
     else:
         # workflow
         # this is when user wants to add/modify item in the inventiry dataset
@@ -65,21 +66,22 @@ def handle_request(r=None, json_data=None, logging=None):
                 item = user_response[6:].strip()
                 query_result = fetch_food_inventory_by_name(phone_id, item)
                 if query_result:
-                    text = f"""The item: {item} is present in the inventory, and has the following properties: \n{query_result[0]}"""
+                    text = f"""The item: {item} is present in the inventory, and has the following properties: \n{query_result}"""
                     r.send_text(text)
-                    text = f"""Please enter the new values for these properties: name, quantity, units, category and sub-category(optional)"""
+                    text = f"""Please enter the new values for these properties: name, quantity, units, category and sub_category(optional)"""
                     r.send_text(text)
                     message = f"modify {item}"
                     add_msg_to_conversation(phone_id, [{"role": "user", "content": message}])
                 else:
                     text = f"The item: {item} is not present in the inventory! Let's start over again"
                     clear_conversation(phone_id)
+                    r.send_text(text)
                     display_food_inventory(r)
             elif user_response.startswith("delete"):
                 item = user_response[7:].strip()
                 query_result = fetch_food_inventory_by_name(phone_id, item)
                 if query_result:
-                    text = f"""The item: {item} is present in the inventory, and has the following properties: \n{query_result[0]}"""
+                    text = f"""The item: {item} is present in the inventory, and has the following properties: \n{query_result}"""
                     r.send_text(text)
                     text = f"""Are you sure you want to delete this item ?"""
                     r.send_text(text)
@@ -95,7 +97,7 @@ def handle_request(r=None, json_data=None, logging=None):
                 if not query_result:
                     categories = fetch_food_inventory_categories()
                     sub_categories = fetch_food_inventory_subcategories()
-                    text = f"""Alright! Adding item: {item} to inventory!\n\nExisting categories: {categories}\n\nExisting sub-categories: {sub_categories}\n\nPlease go ahead and add values for the following properties: quantity, units, category and sub-category(optional)""" 
+                    text = f"""Alright! Adding item: {item} to inventory!\n\nExisting categories: {categories}\n\nExisting sub-categories: {sub_categories}\n\nPlease go ahead and add values for the following properties: quantity, units, category and sub_category(optional)""" 
                     r.send_text(text)
                     message = f"add {item}"
                     add_msg_to_conversation(phone_id, [{"role": "user", "content": message}])
@@ -109,7 +111,7 @@ def handle_request(r=None, json_data=None, logging=None):
             # delete case:
             if message_history.messages[0]['content'].startswith("delete"):
                 if user_response == "yes":
-                    item = message_history[0][3:].strip()
+                    item = message_history.messages[0]['content'][6:].strip()
                     delete_from_food_inventory(phone_id, item)
                     text = f"item: {item} deleted from inventory!"
                     r.send_text(text)
@@ -118,15 +120,16 @@ def handle_request(r=None, json_data=None, logging=None):
 
             # modify case:
             elif message_history.messages[0]['content'].startswith("modify"):
-                item = message_history[0][6:].strip()
+                item = message_history.messages[0]['content'][6:].strip()
                 agent = ConversationAgent()
-                agent.init_for_json_creation(keys=["name", "quantity", "units", "category", "sub-category"], optional=["sub-category"])
+                agent.init_for_json_creation(keys=["name", "quantity", "units", "category", "sub_category"], optional=["sub_category"])
                 generated_json = agent.generate_response(user_response)
                 try: 
                     dict_ = json.loads(generated_json)
                     update_food_inventory_item(phone_id, item, dict_)
                 except Exception as e:
                     logging.error(e)
+                    r.send_text(generated_json)
                     r.send_text("Sorry, that didn't work out as well as it appeared to me. Let's try again")
                 else:
                     r.send_text(f"Item: {item} modified in inventory!")
@@ -135,7 +138,7 @@ def handle_request(r=None, json_data=None, logging=None):
             elif message_history.messages[0]['content'].startswith("add"):
                 item = message_history.messages[0]['content'][3:].strip()
                 agent = ConversationAgent()
-                agent.init_for_json_creation(keys=["quantity", "units", "category", "sub-category"], optional=["sub-category"])
+                agent.init_for_json_creation(keys=["quantity", "units", "category", "sub_category"], optional=["sub_category"])
                 generated_json = agent.generate_response(user_response)
                 try: 
                     dict_ = json.loads(generated_json)
@@ -152,6 +155,7 @@ def handle_request(r=None, json_data=None, logging=None):
             
         else:
             r.send_text("Not sure what that meant...I'm assuming you want to see the menu again?")
+            clear_conversation(phone_id)
             display_food_inventory(r)
             
 

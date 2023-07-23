@@ -17,6 +17,7 @@ def update_food_inventory_item(phone_id, name, item_dict):
     
     if to_update:
         item_dict['created_on'] = to_update.created_on
+        item_dict['phone_id'] = to_update.phone_id
         delete_from_food_inventory(phone_id, name)
         make_transient(to_update)
     else:
@@ -69,13 +70,13 @@ def add_to_food_inventory(phone_id, init=False):
         dict(name="rolled oats", quantity=500, units="grams", category="cereal"),
         dict(name="blueberries", quantity=100, units="grams", category="fruits", sub_category="berries"),
         dict(name="carrots", quantity=1, units="kilograms", category="vegetables"),
-        dict(name="medium Avocado", quantity=8, units="pieces", category="fruits"),
+        dict(name="medium avocado", quantity=8, units="pieces", category="fruits"),
         dict(name="quinoa", quantity=500, units="grams", category="grains"),
         dict(name="peanut butter", quantity=500, units="grams", category="nuts", sub_category="butter"),
         dict(name="tomato", quantity=500, units="grams", category="vegetables"),
-        dict(name="almond Butter", quantity=250, units="grams", category="nuts", sub_category="butter"),
+        dict(name="almond butter", quantity=250, units="grams", category="nuts", sub_category="butter"),
         dict(name="mint leaves", quantity=200, units="grams", category="herbs"),
-        dict(name="small Lemon", quantity=5, units="pieces", category="fruits"),
+        dict(name="small lemon", quantity=5, units="pieces", category="fruits"),
         dict(name="salt", quantity=250, units="grams", category="seasonings"),
         dict(name="pepper", quantity=100, units="grams", category="seasonings"),
     ]

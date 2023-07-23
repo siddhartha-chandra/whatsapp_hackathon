@@ -96,16 +96,24 @@ def handle_request(r=None, json_data=None, logging=None):
             r.set_bot_state("Main_Menu")
             display_main_menu(r)
         else:
-            agent_response = agent.generate_response(user_response)
-            update_user_conversation(phone_id, agent.messages)
-            r.send_text(agent_response)
+            try: 
+                agent_response = agent.generate_response(user_response)
+            except Exception as e:
+                logging.error(e)
+                agent_response = "Something went wrong!..Let me sober up and get back...In case I don't remember your earlier stuff, blame it on the artificial concussion I just had"
+                clear_conversation(phone_id)
+                r.send_text(agent_response)
+                handle_request(r, json_data, logging)
+            else:
+                update_user_conversation(phone_id, agent.messages)
+                r.send_text(agent_response)
 
-        if agent_response.endswith(agent.trigger_stop_message()):
-            # clear conversations table for given number
-            clear_conversation(phone_id)
-            # display main menu
-            r.set_bot_state("Main_Menu")
-            display_main_menu(r)
+                if agent_response.endswith(agent.trigger_stop_message()):
+                    # clear conversations table for given number
+                    clear_conversation(phone_id)
+                    # display main menu
+                    r.set_bot_state("Main_Menu")
+                    display_main_menu(r)
 
 
     if do_return:

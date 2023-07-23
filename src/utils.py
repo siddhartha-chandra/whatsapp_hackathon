@@ -18,16 +18,12 @@ def display_user_preferences(r, phone_id):
     if preferences:
         if preferences.diet_preferences:
             menu_section.add_choice("diet_preferences", "diet preferences")
-            i += 1
         if preferences.diet_restrictions:
             menu_section.add_choice(f"diet_restrictions", "diet restrictions")
-            i += 1
         if preferences.cooking_appliances:
             menu_section.add_choice("cooking_appliances", "cooking appliances")
-            i += 1
         if preferences.utensils:
             menu_section.add_choice(f"utensils", "cooking utensils")
-            i += 1
         if preferences.location:
             menu_section.add_choice(f"location", "location")
 
