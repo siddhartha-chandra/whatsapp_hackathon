@@ -32,10 +32,14 @@ def get_food_inventory_columns():
     return columns(FoodInventory)
 
 def fetch_food_inventory_categories():
-    return db.session.query(FoodInventory.category).distinct().all()
+    res = db.session.query(FoodInventory.category).distinct().all()
+    res = [item[0] for item in res]
+    return res
 
 def fetch_food_inventory_subcategories():
-    return db.session.query(FoodInventory.sub_category).distinct().all()
+    res = db.session.query(FoodInventory.sub_category).distinct().all()
+    res = [item[0] for item in res if res]
+    return res
 
 def fetch_food_inventory_by_name(phone_id, name):
     return db.session.query(FoodInventory).filter_by(phone_id=phone_id, name=name).first()
@@ -59,18 +63,18 @@ def add_to_food_inventory(phone_id, init=False):
     updated_on = datetime.now()
 
     ls = [
-        dict(name="Rolled Oats", quantity=500, units="grams", category="Cereal"),
-        dict(name="Blueberries", quantity=100, units="grams", category="Fruits", sub_category="Berries"),
-        dict(name="Carrots", quantity=1, units="kilograms", category="Vegetables"),
-        dict(name="Medium Avocado", quantity=8, units="pieces", category="Fruits"),
-        dict(name="Quinoa", quantity=500, units="grams", category="Grains"),
-        dict(name="Peanut Butter", quantity=500, units="grams", category="Nuts", sub_category="Butter"),
-        dict(name="Tomato", quantity=500, units="grams", category="Vegetables"),
-        dict(name="Almond Butter", quantity=250, units="grams", category="Nuts", sub_category="Butter"),
-        dict(name="Mint Leaves", quantity=200, units="grams", category="Herbs"),
-        dict(name="small Lemon", quantity=5, units="pieces", category="Fruits"),
-        dict(name="salt", quantity=250, units="grams", category="Seasonings"),
-        dict(name="pepper", quantity=100, units="grams", category="Seasonings"),
+        dict(name="rolled oats", quantity=500, units="grams", category="cereal"),
+        dict(name="blueberries", quantity=100, units="grams", category="fruits", sub_category="berries"),
+        dict(name="carrots", quantity=1, units="kilograms", category="vegetables"),
+        dict(name="medium Avocado", quantity=8, units="pieces", category="fruits"),
+        dict(name="quinoa", quantity=500, units="grams", category="grains"),
+        dict(name="peanut butter", quantity=500, units="grams", category="nuts", sub_category="butter"),
+        dict(name="tomato", quantity=500, units="grams", category="vegetables"),
+        dict(name="almond Butter", quantity=250, units="grams", category="nuts", sub_category="butter"),
+        dict(name="mint leaves", quantity=200, units="grams", category="herbs"),
+        dict(name="small Lemon", quantity=5, units="pieces", category="fruits"),
+        dict(name="salt", quantity=250, units="grams", category="seasonings"),
+        dict(name="pepper", quantity=100, units="grams", category="seasonings"),
     ]
 
     for item in ls:
