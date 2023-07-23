@@ -92,8 +92,6 @@ def handle_request(r=None, json_data=None, logging=None):
         if user_response.lower() in {"done", "exit", "bye", "quit"}:
             # clear conversations table for given number
             clear_conversation(phone_id)
-            # display main menu
-            r.set_bot_state("Main_Menu")
             display_main_menu(r)
         else:
             try: 
@@ -111,8 +109,6 @@ def handle_request(r=None, json_data=None, logging=None):
                 if agent_response.endswith(agent.trigger_stop_message()):
                     # clear conversations table for given number
                     clear_conversation(phone_id)
-                    # display main menu
-                    r.set_bot_state("Main_Menu")
                     display_main_menu(r)
     else:
         agent_response = "Something went wrong!..Let me sober up and get back...In case I don't remember your earlier stuff, blame it on the artificial concussion I just had"

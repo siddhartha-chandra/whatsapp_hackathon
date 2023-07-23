@@ -112,7 +112,7 @@ def handle_request(r=None, json_data=None, logging=None):
             display_main_menu(r)
         else:
             r.send_text("Invalid reply!")
-    else:
+    elif json_data["data"]["type"] != "reply":
         # workflow
         # this is when user wants to add/modify/delete preference in the user_preferences dataset
 
