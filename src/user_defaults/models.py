@@ -7,10 +7,6 @@ class UserDefaults(db.Model):
     __tablename__ = "user_defaults"
 
     phone_id = db.Column(db.String(20), primary_key=True)
-    # diet_preferences = db.Column(db.Array(db.String(256)))
-    # diet_restrictions = db.Column(db.Array(db.String(256)))
-    # cooking_appliances = db.Column(db.Array(db.String(256)))
-    # utensils = db.Column(db.Array(db.String(256)))
     diet_preferences = db.Column(JSONB)
     diet_restrictions = db.Column(JSONB)
     cooking_appliances = db.Column(JSONB)
