@@ -10,6 +10,34 @@ def get_buttons_from_data(title, button_names):
         buttons.add_button(str(i + 1), button)
     return buttons
 
+def display_user_preferences(r, phone_id):
+    list_obj = r.init_interactive("User Preferences")
+    menu_section = list_obj.section("Preference")
+    preferences = fetch_user_defaults(phone_id)
+
+    if preferences:
+        if preferences.diet_preferences:
+            menu_section.add_choice("diet_preferences", "diet preferences")
+            i += 1
+        if preferences.diet_restrictions:
+            menu_section.add_choice(f"diet_restrictions", "diet restrictions")
+            i += 1
+        if preferences.cooking_appliances:
+            menu_section.add_choice("cooking_appliances", "cooking appliances")
+            i += 1
+        if preferences.utensils:
+            menu_section.add_choice(f"utensils", "cooking utensils")
+            i += 1
+        if preferences.location:
+            menu_section.add_choice(f"location", "location")
+
+    
+    main_menu_section = list_obj.section("Main Menu")
+    main_menu_section.add_choice("Main_Menu", "Main Menu", description="")
+    r.add_interactive_object(list_obj)
+    text = "From the interactive list above, you can view user preferences by category or return to the main menu."
+    text_2 = "Alternately, if you want to add/modify/delete an item in your user preferences, please write the exact name of the item in the following format: Add/Modify/Delete [Item name]"
+    r.set_bot_state("User_Preferences_Menu")
 
 def display_food_inventory(r):
 
