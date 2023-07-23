@@ -60,6 +60,7 @@ def display_food_inventory(r):
 def display_main_menu(r):
     list_obj = r.init_interactive("Welcome to Foodio! Check out the list below")
     menu_section = list_obj.section("Main Menu")
+    menu_section.add_choice("view_update", "food stock", description="View/Modify your food inventory")
     menu_section.add_choice("recommend", "recommend a meal", description="Recommend a meal based on your preferences")
     menu_section.add_choice("preferences", "user preferences", description="View/Update your user preferences")
     r.add_interactive_object(list_obj)
