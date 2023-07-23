@@ -84,6 +84,12 @@ def add_to_food_inventory(phone_id, init=False):
 
 
 ### User Defaults ###
+def create_user_defaults(phone_id):
+    created_on = datetime.now()
+    updated_on = datetime.now()
+    res = UserDefaults(phone_id=phone_id, created_on=created_on, updated_on=updated_on)
+    return res
+
 def clear_user_preferences(phone_id):
     db.session.query(UserDefaults).filter_by(phone_id=phone_id).delete()
     db.session.commit()
