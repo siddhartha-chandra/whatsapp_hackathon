@@ -45,7 +45,7 @@ def display_food_inventory(r):
     menu_section = list_obj.section("Categories")
     categories = fetch_food_inventory_categories()
     for i, category in enumerate(categories):
-        menu_section.add_choice(f"{i}", category[0])
+        menu_section.add_choice(f"{i}", category)
     
     main_menu_section = list_obj.section("Main Menu")
     main_menu_section.add_choice("Main_Menu", "Main Menu", description="")

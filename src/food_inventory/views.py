@@ -102,11 +102,12 @@ def handle_request(r=None, json_data=None, logging=None):
                 else:
                     text = f"""The item: {item} already exists! Though you can modify it using the 'modify [item name]'""" 
                     clear_conversation(phone_id)
+                    r.send_text(text)
                     display_food_inventory(r)
         # 2. if conversation exists:
         elif message_history:
             # delete case:
-            if message_history.messages[0].startswith("delete"):
+            if message_history.messages[0]['content'].startswith("delete"):
                 if user_response == "yes":
                     item = message_history[0][3:].strip()
                     delete_from_food_inventory(phone_id, item)
@@ -116,7 +117,7 @@ def handle_request(r=None, json_data=None, logging=None):
                     r.send_text("Phew! That was close...")
 
             # modify case:
-            elif message_history[0].startswith("modify"):
+            elif message_history.messages[0]['content'].startswith("modify"):
                 item = message_history[0][6:].strip()
                 agent = ConversationAgent()
                 agent.init_for_json_creation(keys=["name", "quantity", "units", "category", "sub-category"], optional=["sub-category"])
@@ -131,8 +132,8 @@ def handle_request(r=None, json_data=None, logging=None):
                     r.send_text(f"Item: {item} modified in inventory!")
                     r.send_text(f"new properties:\n{dict_}")
             # add case
-            elif message_history[0].startswith("add"):
-                item = message_history[0][3:].strip()
+            elif message_history.messages[0]['content'].startswith("add"):
+                item = message_history.messages[0]['content'][3:].strip()
                 agent = ConversationAgent()
                 agent.init_for_json_creation(keys=["quantity", "units", "category", "sub-category"], optional=["sub-category"])
                 generated_json = agent.generate_response(user_response)
@@ -147,7 +148,7 @@ def handle_request(r=None, json_data=None, logging=None):
                     r.send_text(f"Properties:\n{dict_}")
             
             clear_conversation(phone_id)
-            display_food_inventory()
+            display_food_inventory(r)
             
         else:
             r.send_text("Not sure what that meant...I'm assuming you want to see the menu again?")

@@ -19,6 +19,9 @@ def update_food_inventory_item(phone_id, name, item_dict):
         item_dict['created_on'] = to_update.created_on
         delete_from_food_inventory(phone_id, name)
         make_transient(to_update)
+    else:
+        item_dict['phone_id'] = phone_id
+        item_dict['name'] = name
        
     record = FoodInventory(**item_dict)
     db.session.add(record)
@@ -116,7 +119,7 @@ def add_to_user_defaults(phone_id):
     created_on = datetime.now()
     updated_on = datetime.now()
     location = "Andheri(W), Mumbai, India"
-    diet_preferences = ["oil-free", "Vegan", "salt-free", "sugar free"]
+    diet_preferences = ["oil-free", "vegan", "salt-free", "sugar free"]
     diet_restrictions = ["papaya", "peanuts"]
     cooking_appliances = ["toaster", "slow juicer", "blender"]
     utensils = ["frying pan", "wok", "medium cooking pot"]
