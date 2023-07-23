@@ -106,7 +106,7 @@ def handle_request(r=None, json_data=None, logging=None):
         # 2. if conversation exists:
         elif message_history:
             # delete case:
-            if message_history[0].startswith("delete"):
+            if message_history.messages[0].startswith("delete"):
                 if user_response == "yes":
                     item = message_history[0][3:].strip()
                     delete_from_food_inventory(phone_id, item)
