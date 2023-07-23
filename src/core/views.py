@@ -6,9 +6,11 @@ import logging
 import json
 import openai
 
-from src.food_update.views import handle_request as food_update_handle_request
+from src.user_defaults.views import handle_request as user_preferences_handle_request
 from src.food_inventory.views import handle_request as food_inventory_handle_request
 from src.main_menu.views import handle_request as main_menu_handle_request
+from src.recommend.views import handle_request as recommend_handle_request
+
 from src.utils import get_buttons_from_data, display_main_menu
 
 core_bp = Blueprint("core", __name__)
@@ -26,12 +28,8 @@ def handle_request():
     bot_states_dict = {
         "Main_Menu": main_menu_handle_request,
         "Food_Inventory_Menu": food_inventory_handle_request,
-        "Food_Update_Menu": "Food_Update_Menu",
-        "Past_Meals_Menu": "Past_Meals_Menu",
-        "Meal_Suggestions_Menu": "Meal_Suggestions_Menu",
-        "Favorite_Meals_Menu": "Favorite_Meals_Menu",
-        "Meal_Recording_Menu": "Meal_Recording_Menu",
-        "User_Preferences_Menu": "User_Preferences_Menu"
+        "Food_Recommender": recommend_handle_request,
+        "User_Preferences_Menu": user_preferences_handle_request
     }
 
     bot_state_handler = bot_states_dict.get(json_data["bot_state"], None)
