@@ -72,7 +72,7 @@ def handle_request(r=None, json_data=None, logging=None):
     elif (json_data["data"]["type"] == "reply"):
         reply_id = json_data["data"]["body"]["id"]
         title = json_data["data"]["body"]["title"]
-        ls = []
+        ls = ["No preference set"]
         if reply_id == "diet_preferences":
             # show data
             query_result = fetch_user_defaults(phone_id)
