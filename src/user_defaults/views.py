@@ -111,7 +111,8 @@ def handle_request(r=None, json_data=None, logging=None):
         elif reply_id == "Main_Menu":
             display_main_menu(r)
         else:
-            r.send_text("Invalid reply!")
+            r.send_text("Invalid reply! Let's try again")
+            display_user_preferences(r, phone_id)
     elif json_data["data"]["type"] != "reply":
         # workflow
         # this is when user wants to add/modify/delete preference in the user_preferences dataset
