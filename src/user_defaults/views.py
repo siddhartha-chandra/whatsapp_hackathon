@@ -172,6 +172,7 @@ def handle_request(r=None, json_data=None, logging=None):
                     r.send_text(text)
                     clear_conversation(phone_id)
                     display_user_preferences(r, phone_id)
+            r.set_bot_state("User_Preferences_Menu")
         # 2. if conversation exists:
         elif message_history:
             query_result = fetch_user_defaults(phone_id)

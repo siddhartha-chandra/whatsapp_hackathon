@@ -106,6 +106,7 @@ def handle_request(r=None, json_data=None, logging=None):
                     clear_conversation(phone_id)
                     r.send_text(text)
                     display_food_inventory(r)
+            r.set_bot_state("Food_Inventory_Menu")
         # 2. if conversation exists:
         elif message_history:
             # delete case:
