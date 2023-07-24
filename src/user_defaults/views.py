@@ -72,40 +72,39 @@ def handle_request(r=None, json_data=None, logging=None):
     elif (json_data["data"]["type"] == "reply"):
         reply_id = json_data["data"]["body"]["id"]
         title = json_data["data"]["body"]["title"]
-        ls = ["No preference set"]
         if reply_id == "diet_preferences":
             # show data
             query_result = fetch_user_defaults(phone_id)
             if query_result:
-                result = query_result.diet_preferences if query_result.diet_preferences else []
+                result = query_result.diet_preferences if query_result.diet_preferences else ["No diet_preferences set"]
                 ls = [repr(row) for row in result]
             r.send_list(ls)
             display_user_preferences(r, phone_id)
         elif reply_id == "diet_restrictions":
             query_result = fetch_user_defaults(phone_id)
             if query_result:
-                result = query_result.diet_restrictions if query_result.diet_restrictions else []
+                result = query_result.diet_restrictions if query_result.diet_restrictions else ["No diet_restriction set"]
                 ls = [repr(row) for row in result]
             r.send_list(ls)
             display_user_preferences(r, phone_id)
         elif reply_id == "cooking_appliances":
             query_result = fetch_user_defaults(phone_id)
             if query_result:
-                result = query_result.cooking_appliances if query_result.cooking_appliances else []
+                result = query_result.cooking_appliances if query_result.cooking_appliances else ["No cooking_appliances set"]
                 ls = [repr(row) for row in result]
             r.send_list(ls)
             display_user_preferences(r, phone_id)
         elif reply_id == "utensils":
             query_result = fetch_user_defaults(phone_id)
             if query_result:
-                result = query_result.utensils if query_result.utensils else []
+                result = query_result.utensils if query_result.utensils else ["No utensils set"]
                 ls = [repr(row) for row in result]
             r.send_list(ls)
             display_user_preferences(r, phone_id)
         elif reply_id == "location":
             query_result = fetch_user_defaults(phone_id)
             if query_result:
-                result = query_result.location if query_result.location else []            
+                result = query_result.location if query_result.location else "No location set"
             r.send_text(result)
             display_user_preferences(r, phone_id)
         elif reply_id == "Main_Menu":
