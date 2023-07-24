@@ -177,7 +177,7 @@ def handle_request(r=None, json_data=None, logging=None):
             # delete case:
             if message_history.messages[0]['content'].startswith("delete"):
                 if user_response == "yes":
-                    preference = message_history.messages[0]['content'][3:].strip()
+                    preference = message_history.messages[0]['content'][6:].strip()
                     query_result = reset_preference_in_query_result(preference, query_result)
                     update_user_preferences(phone_id, query_result)
                     text = f"preference: {preference} has been cleared!"
