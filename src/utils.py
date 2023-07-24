@@ -14,18 +14,12 @@ def display_user_preferences(r, phone_id):
     list_obj = r.init_interactive("User Preferences")
     menu_section = list_obj.section("Preference")
     preferences = fetch_user_defaults(phone_id)
-
-    if preferences:
-        if preferences.diet_preferences:
-            menu_section.add_choice("diet_preferences", "diet preferences")
-        if preferences.diet_restrictions:
-            menu_section.add_choice(f"diet_restrictions", "diet restrictions")
-        if preferences.cooking_appliances:
-            menu_section.add_choice("cooking_appliances", "cooking appliances")
-        if preferences.utensils:
-            menu_section.add_choice(f"utensils", "cooking utensils")
-        if preferences.location:
-            menu_section.add_choice(f"location", "location")
+        
+    menu_section.add_choice("diet_preferences", "diet preferences")
+    menu_section.add_choice(f"diet_restrictions", "diet restrictions")
+    menu_section.add_choice("cooking_appliances", "cooking appliances")
+    menu_section.add_choice(f"utensils", "cooking utensils")
+    menu_section.add_choice(f"location", "location")
 
     
     main_menu_section = list_obj.section("Main Menu")
