@@ -3,9 +3,24 @@ import requests
 import openai
 
 
+def view_items_by_filter(category=None, sub_category=None, date_=None):
+    pass
+
+def modify_item(item_name, category=None, sub_category=None, date_=None):
+    pass
+
+def delete_item(item_name):
+    pass
+
+def add_modify_items(*args, **kwargs):
+    pass
+
+# openai.api_key = ""
+
 class ConversationAgent:
 
     def __init__(self, messages=[]):
+
         bearer_token = os.getenv("BEARER_TOKEN")
 
         self.url = os.getenv("OZONE_URL")
@@ -15,6 +30,7 @@ class ConversationAgent:
             'Content-Type': 'application/json'
         }
         self.messages = messages
+        self.functions = []
         self.model = "gpt-3.5-turbo"
         self.temperature = 0
         self.max_tokens = 500
@@ -38,7 +54,66 @@ class ConversationAgent:
         {questions}
         """
         return prompt
-        
+
+    def view_items_by_filter(self):
+        return {
+            "name": "view_items_by_filter",
+            "description": "View items in the food inventory by filter/s like category, sub-category and date",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "category": {
+                        "type": "string",
+                        "description": "The category of the item"
+                    },
+                    "sub_category": {
+                        "type": "string",
+                        "description": "The sub_category of the item"
+                    },
+                    "date_time": {
+                        "type": "string",
+                        "description": "The date and time when the item was added"
+                    },
+                    "date_clause": {
+                        "type": "string",
+                        "description": "on, before or after. This clause is used only if date_time is provided"
+                    }
+                },
+                "required": []
+            }
+        }
+    
+    def add_modify_items(self):
+        return {
+            "name": "add_modify_items",
+            "description": "adds or modifies items in the food inventory.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the item being added/modified."
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "description": "The quantity of the item being added/modified"
+                    },
+                    "units": {
+                        "type": "string",
+                        "description": "The units of the item being added/modified. eg. grams, kilograms, litre, etc."
+                    }
+                },
+                "required": ["quantity", "units"]
+            }
+        }
+
+
+    def init_for_function_calling(self, *args, **kwargs):
+        self.functions = [
+            self.view_items_by_filter(),
+            self.add_modify_items()
+        ]
+
     def init_for_json_creation(self, *args, **kwargs):
         role  = "system"
         message = f""" You are a helpful assistant who can create a json object from a list of keys and a list of values supplied to you."""
@@ -47,6 +122,10 @@ class ConversationAgent:
         self.messages = [
             {"role": role, "content": message},
             {"role": role, "content": context},
+        ]
+        self.functions = [
+            self.view_items_by_filter(),
+            self.add_items()
         ]
 
 
@@ -88,6 +167,7 @@ class ConversationAgent:
         Once the user has answered these properly, check if they have any other preferences that need to be noted down.
 
         Generate your meal recommendations in the following format:
+            Meal Name: []
             Serves: []
             Meal Type: []
             Calories: []
@@ -102,7 +182,7 @@ class ConversationAgent:
         
         Once user is done, your final response should include:
             'Have an enjoyable meal! Thanks for using the Foodio assisstant.'
-            and ask the user to say 'done' to exit the program.
+            and ask the user to type 'done', 'bye' or 'exit' to move back to main menu.
         """
 
         self.messages = [
@@ -134,8 +214,11 @@ class ConversationAgent:
             "model": kwargs.get("model", self.model),
             "temperature": temp,
             "max_tokens": max_tokens,
-            "messages": self.messages
+            "messages": self.messages,
+            "functions": self.functions
         }
+
+        # response = openai.ChatCompletion.create(**data)
 
         response = requests.post(self.url, headers=self.headers, json=data)
 

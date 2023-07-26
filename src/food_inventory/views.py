@@ -123,7 +123,8 @@ def handle_request(r=None, json_data=None, logging=None):
             elif message_history.messages[0]['content'].startswith("modify"):
                 item = message_history.messages[0]['content'][6:].strip()
                 agent = ConversationAgent()
-                agent.init_for_json_creation(keys=["name", "quantity", "units", "category", "sub_category"], optional=["sub_category"])
+                agent.init_for_function_calling()
+                # agent.init_for_json_creation(keys=["name", "quantity", "units", "category", "sub_category"], optional=["sub_category"])
                 generated_json = agent.generate_response(user_response)
                 try: 
                     dict_ = json.loads(generated_json)
@@ -139,7 +140,8 @@ def handle_request(r=None, json_data=None, logging=None):
             elif message_history.messages[0]['content'].startswith("add"):
                 item = message_history.messages[0]['content'][3:].strip()
                 agent = ConversationAgent()
-                agent.init_for_json_creation(keys=["quantity", "units", "category", "sub_category"], optional=["sub_category"])
+                agent.init_for_function_calling()
+                # agent.init_for_json_creation(keys=["quantity", "units", "category", "sub_category"], optional=["sub_category"])
                 generated_json = agent.generate_response(user_response)
                 try: 
                     dict_ = json.loads(generated_json)
