@@ -18,6 +18,7 @@ def update_food_inventory_item(phone_id, name, item_dict):
     if to_update:
         item_dict['created_on'] = to_update.created_on
         item_dict['phone_id'] = to_update.phone_id
+        item_dict['name'] = item_dict.get('name', name)
         delete_from_food_inventory(phone_id, name)
         make_transient(to_update)
     else:
