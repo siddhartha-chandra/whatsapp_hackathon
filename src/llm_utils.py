@@ -42,7 +42,7 @@ class ConversationAgent:
     def init_for_json_creation(self, *args, **kwargs):
         role  = "system"
         message = f""" You are a helpful assistant who can create a json object intelligently from a list of keys and a list of values supplied to you. The user should not be asked to provide any more details"""
-        context = f"""The list of keys given to you is {kwargs.get("keys", None)}. Out of these, {kwargs.get("optional", None)} are optional."""
+        context = f"""The list of keys given to you is {kwargs.get("keys", None)}. Out of these, {kwargs.get("optional", None)} are optional. The key 'quantity' will always be a number"""
         
         self.messages = [
             {"role": role, "content": message},
