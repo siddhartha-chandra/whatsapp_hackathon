@@ -19,7 +19,11 @@ def update_generate_dict(dict_, agent, item):
         units = fetch_food_inventory_units()
         text = f"I have the following list of units: {units}. Ignoring any typos, long-forms or short-forms, if '{inputted_units}' matches any item from the list: {units}, then return JUST the matched value as response. Otherwise simply return {inputted_units} as your response"
         response = agent.generate_response(text)
-        dict_["units"] = json.loads(response).get("units")
+        try:
+            dict_["units"] = json.loads(response).get("units")
+        except Exception as e:
+            dict_["units"] = response
+            
     # get values of category and sub-category from list provided
     if not dict_.get("category"):
         categories = fetch_food_inventory_categories()
