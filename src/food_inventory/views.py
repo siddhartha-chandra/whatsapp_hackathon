@@ -7,7 +7,7 @@ from src.db_utils import (
     is_food_inventory_empty, add_to_food_inventory, fetch_food_inventory_categories, 
     fetch_food_inventory_by_category, fetch_conversation, fetch_food_inventory_by_name,
     clear_conversation, fetch_food_inventory_subcategories, add_msg_to_conversation,
-    delete_from_food_inventory, update_food_inventory_item
+    delete_from_food_inventory, update_food_inventory_item, fetch_food_inventory_units
     )
 from src.llm_utils import ConversationAgent
 
@@ -93,7 +93,7 @@ def handle_request(r=None, json_data=None, logging=None):
                 if query_result:
                     text = f"""The item: {item} is present in the inventory, and has the following properties: \n{query_result}"""
                     r.send_text(text)
-                    text = f"""Please enter the new values for these properties: name, quantity, units, category and sub_category(optional)"""
+                    text = f"""Please enter the new values for 'quantity' and 'units'. Optionally provide the name, category and sub_category"""
                     r.send_text(text)
                     message = f"modify {item}"
                     add_msg_to_conversation(phone_id, [{"role": "user", "content": message}])
@@ -122,7 +122,7 @@ def handle_request(r=None, json_data=None, logging=None):
                 if not query_result:
                     categories = fetch_food_inventory_categories()
                     sub_categories = fetch_food_inventory_subcategories()
-                    text = f"""Alright! Adding item: {item} to inventory!\n\nExisting categories: {categories}\n\nExisting sub-categories: {sub_categories}\n\nPlease go ahead and add values for the following properties: quantity, units, category and sub_category(optional)""" 
+                    text = f"""Alright! Adding item: {item} to inventory!\n\nPlease specify the quanity and units, and optionally a category and sub_category \n\nExisting categories: {categories}\n\nExisting sub-categories: {sub_categories}\n\n""" 
                     r.send_text(text)
                     message = f"add {item}"
                     add_msg_to_conversation(phone_id, [{"role": "user", "content": message}])
@@ -148,31 +148,33 @@ def handle_request(r=None, json_data=None, logging=None):
             elif message_history.messages[0]['content'].startswith("modify"):
                 item = message_history.messages[0]['content'][6:].strip()
                 agent = ConversationAgent()
-                agent.init_for_json_creation(keys=["name", "quantity", "units", "category", "sub_category"], optional=["sub_category"])
+                agent.init_for_json_creation(keys=["quantity", "units", "name", "category", "sub_category"], optional=["name", "category", "sub_category"])
                 generated_json = agent.generate_response(user_response)
                 try: 
                     dict_ = json.loads(generated_json)
-                    update_food_inventory_item(phone_id, item, dict_)
                 except Exception as e:
                     logging.error(e)
                     r.send_text(generated_json)
                     r.send_text("Sorry, that didn't work out as well as it appeared to me. Let's try again")
                 else:
+                    dict_ = update_generate_dict(dict_, agent, item)
+                    update_food_inventory_item(phone_id, item, dict_)
                     r.send_text(f"Item: {item} modified in inventory!")
                     r.send_text(f"new properties:\n{dict_}")
             # add case
             elif message_history.messages[0]['content'].startswith("add"):
                 item = message_history.messages[0]['content'][3:].strip()
                 agent = ConversationAgent()
-                agent.init_for_json_creation(keys=["quantity", "units", "category", "sub_category"], optional=["sub_category"])
+                agent.init_for_json_creation(keys=["quantity", "units", "category", "sub_category"], optional=["category", "sub_category"])
                 generated_json = agent.generate_response(user_response)
                 try: 
                     dict_ = json.loads(generated_json)
-                    update_food_inventory_item(phone_id, item, dict_)
                 except Exception as e:
                     logging.error(e)
                     r.send_text("Sorry, that didn't work out as well as I hoped. Let's try again")
                 else:
+                    dict_ = update_generate_dict(dict_, agent, item)
+                    update_food_inventory_item(phone_id, item, dict_)
                     r.send_text(f"Item: {item} added in inventory!")
                     r.send_text(f"Properties:\n{dict_}")
             
