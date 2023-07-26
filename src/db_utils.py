@@ -46,6 +46,11 @@ def fetch_food_inventory_subcategories():
     res = [item[0] for item in res if res]
     return res
 
+def fetch_food_inventory_units():
+    res = db.session.query(FoodInventory.units).distinct().all()
+    res = [item[0] for item in res if res]
+    return res
+
 def fetch_food_inventory_by_name(phone_id, name):
     return db.session.query(FoodInventory).filter_by(phone_id=phone_id, name=name).first()
 
