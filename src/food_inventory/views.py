@@ -13,6 +13,31 @@ from src.llm_utils import ConversationAgent
 
 food_inventory_bp = Blueprint("food_inventory", __name__)
 
+def update_generate_dict(dict_, agent, item):
+    inputted_units = dict_.get("units")
+    if inputted_units:
+        units = fetch_food_inventory_units()
+        text = f"I have the following list of units: {units}. Ignoring any typos, long-forms or short-forms, if '{inputted_units}' matches any item from the list: {units}, then return JUST the matched value as response. Otherwise simply return {inputted_units} as your response"
+        response = agent.generate_response(text)
+        dict_["units"] = json.loads(response).get("units")
+    # get values of category and sub-category from list provided
+    if not dict_.get("category"):
+        categories = fetch_food_inventory_categories()
+        ## interpret the value of category
+        text = f"What is the category of the following item: {item}? You can use the following categories : {categories} as a reference. If it doesn't fit any category, feel free to create a new one. Please return the asnwer in the JSON format: 'category': <category_name>"
+        response = agent.generate_response(text)
+        dict_["category"] = json.loads(response).get("category")
+    if dict_["category"] and not dict_.get("sub_category"):
+        ## optionally, interpret the value of sub_category
+        sub_categories = fetch_food_inventory_subcategories()
+        ## interpret the value of category
+        text = f"What is the sub-category of the following item: {item}, given that it's category is {dict_['category']}? You can use the following sub_categories : {sub_categories} as a reference. If it doesn't fit any category, feel free to create a new one or leave it empty. Please return the asnwer in the JSON format: 'sub_category': <sub_category name>"
+        response = agent.generate_response(text)
+        response_final = json.loads(response).get("sub_category")
+        if response_final:
+            dict_["sub_category"] = response_final
+    return dict_
+
 # Food inventory menu
 @food_inventory_bp.route('/food_inventory', methods=['POST'])
 def handle_request(r=None, json_data=None, logging=None):
