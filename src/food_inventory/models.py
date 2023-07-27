@@ -33,5 +33,6 @@ class FoodInventory(db.Model):
             res += f" ({self.sub_category})"
         if self.price:
             res += f"\n{self.price}"
-        res += f"\nUpdated on: {self.updated_on}"
+        readable_updated_on = self.updated_on.strftime("%B %d, %Y %I:%M:%S %p")
+        res += f"\nUpdated on: {readable_updated_on}"
         return res
