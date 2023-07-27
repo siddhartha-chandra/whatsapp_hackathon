@@ -41,8 +41,8 @@ class UserDefaults(db.Model):
         if self.location:
             res += f"\nLocation: {self.location}"
         
-        readable_created_on = self.created_on.strftime("%B %d, %Y %I:%M:%S %p")
-        readable_updated_on = self.updated_on.strftime("%B %d, %Y %I:%M:%S %p")
+        readable_created_on = self.created_on.strftime("%B %d, %Y %I:%M %p")
+        readable_updated_on = self.updated_on.strftime("%B %d, %Y %I:%M %p")
 
         res += f"\nCreated on: {readable_created_on}"
         res += f"\nUpdated on: {readable_updated_on}"
